@@ -1,4 +1,5 @@
 #include <stddef.h>
+#include <assert.h>
 #include <stdio.h>
 
 typedef size_t Entity;
@@ -35,11 +36,16 @@ void debug(struct EntityManager* mgr) {
 
   printf("Entity -> Idx\n");
   for (int i = 0; i < MAX_ENTITIES; i++) { printf("%02ld ", (mgr->entity_to_idx_[i] == (size_t)(-1) ? (long)-1 : (long)mgr->entity_to_idx_[i])); }
+  printf("\n");
+
+  printf("Component trackers\n");
+  for (int i = 0; i < MAX_ENTITIES; i++) { printf("%02lu ", mgr->component_tracker_[i]); }
   printf("\n\n");
 }
 
-void addEntity(struct EntityManager* mgr, long component_tracker) {
-  if (mgr->entity_count_ == MAX_ENTITIES) return;
+Entity addEntity(struct EntityManager* mgr, long component_tracker) {
+  // stop if entity cap filled
+  assert(mgr->entity_count_ != MAX_ENTITIES);
 
   // get available universal signature
   Entity usig = mgr->free_usigs_[0];
@@ -54,24 +60,28 @@ void addEntity(struct EntityManager* mgr, long component_tracker) {
 
   // update entity count
   mgr->entity_count_++;
+  return usig;
 }
 
 void removeEntity(struct EntityManager* mgr, Entity entity) {
-  printf("removing %zu\n", entity);
+  // stop if entity is not in world
+  assert(mgr->entity_count_ != 0 && mgr->entity_to_idx_[entity] != -1);
 
+  printf("removing %zu\n", entity);
   mgr->entity_count_--;
+
 
   // pack array data
   size_t pack_idx = mgr->entity_to_idx_[entity];
+  mgr->entity_to_idx_[mgr->idx_to_entity_[mgr->entity_count_]] = pack_idx;
   mgr->idx_to_entity_[pack_idx] = mgr->idx_to_entity_[mgr->entity_count_];
-  mgr->component_tracker_[pack_idx] = mgr->idx_to_entity_[mgr->entity_count_];
-
-  mgr->entity_to_idx_[mgr->idx_to_entity_[pack_idx]] = pack_idx;
+  mgr->component_tracker_[pack_idx] = mgr->component_tracker_[mgr->entity_count_];
 
 
-  // remove moved / removed data
+  // remove duplicated data
   mgr->entity_to_idx_[entity] = -1;
   mgr->idx_to_entity_[mgr->entity_count_] = -1;
+  mgr->component_tracker_[mgr->entity_count_] = 0;
 
 
   // update universal signatures to reflect freed signature
@@ -85,6 +95,16 @@ void removeEntity(struct EntityManager* mgr, Entity entity) {
   mgr->free_usigs_[entity_usig_idx] = last_used_usig;
 }
 
+void addComponents(struct EntityManager* mgr, Entity entity, long components) {
+  size_t index = mgr->entity_to_idx_[entity];
+  mgr->component_tracker_[index] |= components;
+}
+
+void removeComponents(struct EntityManager* mgr, Entity entity, long components) {
+  size_t index = mgr->entity_to_idx_[entity];
+  mgr->component_tracker_[index] &= (~components);
+}
+
 // <<<<<<< TESTING >>>>>>>
 int main() {
   struct EntityManager mgr = {0, {0}, {0}, {0}, {0}};
@@ -92,7 +112,7 @@ int main() {
   debug(&mgr);
 
   for (int i = 0; i < 3; i++) {
-    addEntity(&mgr, 0);
+    addEntity(&mgr, (long)mgr.free_usigs_[0]);
     debug(&mgr);
   }
 
@@ -101,6 +121,13 @@ int main() {
 
   removeEntity(&mgr, 9);
   debug(&mgr);
-}
 
-// void removeEntity(struct EntityManager* mgr, Entity e) { }
+  addEntity(&mgr, (long)mgr.free_usigs_[0]);
+  debug(&mgr);
+
+  removeEntity(&mgr, 8);
+  debug(&mgr);
+
+  removeEntity(&mgr, 7);
+  debug(&mgr);
+}
