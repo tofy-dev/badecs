@@ -1,6 +1,9 @@
 #include <stddef.h>
 #include <assert.h>
 #include <stdio.h>
+#include <stdint.h>
+
+#include "ecs.h"
 
 typedef size_t Entity;
 
@@ -9,7 +12,7 @@ struct EntityManager {
   Entity entity_count_;
   Entity free_usigs_[MAX_ENTITIES];
 
-  unsigned long component_tracker_[MAX_ENTITIES]; // 64 possible components
+  uint64_t component_tracker_[MAX_ENTITIES]; // 64 possible components
 
   size_t idx_to_entity_[MAX_ENTITIES];
   size_t entity_to_idx_[MAX_ENTITIES];
@@ -111,8 +114,17 @@ int main() {
   init(&mgr);
   debug(&mgr);
 
+  addEntity(&mgr, TRANS);
+  addEntity(&mgr, 0);
+  addEntity(&mgr, TRANS|COLOR);
+  addEntity(&mgr, ANIMA);
+  addEntity(&mgr, COLOR|ANIMA);
+  addEntity(&mgr, TRANS|COLOR|ANIMA);
+  debug(&mgr);
+
+  /*
   for (int i = 0; i < 3; i++) {
-    addEntity(&mgr, (long)mgr.free_usigs_[0]);
+    addEntity(&mgr, (long)mgr.free_usigs_[0]*10);
     debug(&mgr);
   }
 
@@ -122,7 +134,7 @@ int main() {
   removeEntity(&mgr, 9);
   debug(&mgr);
 
-  addEntity(&mgr, (long)mgr.free_usigs_[0]);
+  addEntity(&mgr, (long)mgr.free_usigs_[0]*10);
   debug(&mgr);
 
   removeEntity(&mgr, 8);
@@ -130,4 +142,5 @@ int main() {
 
   removeEntity(&mgr, 7);
   debug(&mgr);
+  */
 }
