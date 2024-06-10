@@ -92,6 +92,7 @@ void removeComponents(struct EntityManager* mgr, Entity entity, long components)
 }
 
 // <<<<<<< TESTING >>>>>>>
+/*
 int main() {
   struct EntityManager mgr = {0, {0}, {0}, {0}, {0}};
   initEntityManager(&mgr);
@@ -109,7 +110,6 @@ int main() {
   debug(&mgr);
 
 
-  /*
   for (int i = 0; i < 3; i++) {
     addEntity(&mgr, (long)mgr.free_usigs_[0]*10);
     debug(&mgr);
@@ -129,5 +129,5 @@ int main() {
 
   removeEntity(&mgr, 7);
   debug(&mgr);
-  */
 }
+*/
