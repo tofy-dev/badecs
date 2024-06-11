@@ -38,3 +38,18 @@ void renderColors(struct EntityManager* mgr, struct ComponentRegistry* reg, SDL_
 void updateAnimations(struct EntityManager* mgr, struct ComponentRegistry* reg) {
   // do nothing
 }
+
+void updateCollisions(struct EntityManager* mgr, struct ComponentRegistry* reg) {
+  for (int i = 0; i < mgr->entity_count_; i++) {
+    Entity entity = mgr->idx_to_entity_[i];
+    size_t idx = mgr->entity_to_idx_[entity];
+
+    if (!(bitat(mgr->component_tracker_[idx], trans))) continue;
+
+    if (reg->transforms_[idx].pos_y == 0) reg->transforms_[idx].vel_y*=-1;
+    else if (reg->transforms_[idx].pos_y == 500) reg->transforms_[idx].vel_y*=-1;
+
+    if (reg->transforms_[idx].pos_x == 0) reg->transforms_[idx].vel_x*=-1;
+    if (reg->transforms_[idx].pos_x == 500) reg->transforms_[idx].vel_x*=-1;
+  }
+}

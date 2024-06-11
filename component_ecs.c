@@ -6,9 +6,11 @@ void PackComponentData(struct EntityManager* mgr, struct ComponentRegistry* reg,
   reg->transforms_[deadIdx] = reg->transforms_[aliveIdx];
   reg->colors_[deadIdx] = reg->colors_[aliveIdx];
   reg->animations_[deadIdx] = reg->animations_[aliveIdx];
+  reg->collisions_[deadIdx] = reg->collisions_[aliveIdx];
 
   // remove now-packed data
   reg->transforms_[aliveIdx] = (struct TransformComponent){0};
   reg->colors_[aliveIdx] = (struct ColorComponent){0};
   reg->animations_[aliveIdx] = (struct AnimationComponent){0};
+  reg->collisions_[aliveIdx] = (struct CollisionComponent){};
 }

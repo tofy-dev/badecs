@@ -102,15 +102,10 @@ int SDL_AppIterate(void *appstate) {
   SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
   SDL_RenderClear(renderer);
 
-  if (SDL_GetTicks() % 500 == 0) {
+  if (SDL_GetTicks() % 10 == 0) {
     updateTransforms(&manager, &registry);
     renderColors(&manager, &registry, renderer);
-    // debug(&manager);
-
-    for (int i = 0; i < manager.entity_count_; i++) {
-      struct TransformComponent tc = registry.transforms_[manager.idx_to_entity_[i]];
-      struct ColorComponent cc = registry.colors_[manager.idx_to_entity_[i]];
-    }
+    updateCollisions(&manager, &registry);
   }
 
   return app_quit;
