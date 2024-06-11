@@ -33,7 +33,7 @@ struct ComponentRegistry {
   struct CollisionComponent collisions_[MAX_ENTITIES];
 };
 
-void PackComponentData(struct EntityManager* mgr, struct ComponentRegistry* reg, size_t aliveIdx, size_t deadIdx);
+void packComponentData(struct EntityManager* mgr, struct ComponentRegistry* reg, size_t aliveIdx, size_t deadIdx);
 
 
 // COMPONENT MACROS

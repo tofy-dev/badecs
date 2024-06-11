@@ -61,7 +61,7 @@ int SDL_AppInit(void** appstate, int argc, char* argv[]) {
     initEntityManager(&manager);
     srand(time(NULL));
 
-    for (int i = 0; i < 10000; i++) {
+    for (int i = 0; i < 1000; i++) {
       Entity ent = addEntity(&manager, TRANS|COLOR);
       registry.transforms_[manager.entity_to_idx_[ent]] = (struct TransformComponent){rand()%501, rand()%501, rand()%10, rand()%10};
       registry.colors_[manager.entity_to_idx_[ent]] = (struct ColorComponent){rand()%256, rand()%256, rand()%256, 255};

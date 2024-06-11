@@ -55,7 +55,7 @@ void removeEntity(struct EntityManager* mgr, Entity entity) {
   // stop if entity is not in world
   assert(mgr->entity_count_ != 0 && mgr->entity_to_idx_[entity] != -1);
 
-  printf("removing %zu\n", entity);
+  // printf("removing %zu\n", entity);
   mgr->entity_count_--;
 
 
