@@ -6,7 +6,7 @@
 
 // ENTITY STUFF
 typedef size_t Entity;
-#define MAX_ENTITIES 10
+#define MAX_ENTITIES 10001
 
 struct EntityManager {
   Entity entity_count_;

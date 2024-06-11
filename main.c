@@ -3,6 +3,7 @@
 #include <SDL3/SDL_stdinc.h>
 #include <SDL3/SDL_main.h>
 #include <stdlib.h>
+#include <time.h>
 
 #include "component_ecs.h"
 #include "system_ecs.h"
@@ -10,7 +11,6 @@
 
 // copy boilerplate
 // dont forget to initalize registry
-Entity pA, pB, pC, pD, pE;
 struct EntityManager manager = {0, {0}, {0}, {0}, {0}};
 struct ComponentRegistry registry = {{{0, 0, 0, 0}}, {{0, 0, 0, 0}}, {{0}}};
 
@@ -59,25 +59,13 @@ int SDL_AppInit(void** appstate, int argc, char* argv[]) {
 
     // start program
     initEntityManager(&manager);
+    srand(time(NULL));
 
-    pA = addEntity(&manager, TRANS|COLOR);
-    pB = addEntity(&manager, TRANS|COLOR); 
-    pC = addEntity(&manager, TRANS|COLOR); 
-    pD = addEntity(&manager, TRANS|COLOR); 
-    pE = addEntity(&manager, TRANS|COLOR); 
-
-    // should accept entity_to_index_ value
-    registry.transforms_[manager.entity_to_idx_[pA]] = (struct TransformComponent){50, 250, 0, 0};
-    registry.transforms_[manager.entity_to_idx_[pB]] = (struct TransformComponent){75, 250, 0, 0};
-    registry.transforms_[manager.entity_to_idx_[pC]] = (struct TransformComponent){100, 250, -10, -10};
-    registry.transforms_[manager.entity_to_idx_[pD]] = (struct TransformComponent){200, 250, 10, 10};
-    registry.transforms_[manager.entity_to_idx_[pE]] = (struct TransformComponent){300, 250, 0, -10};
-
-    registry.colors_[manager.entity_to_idx_[pA]] = (struct ColorComponent){255, 255, 255, 255};
-    registry.colors_[manager.entity_to_idx_[pB]] = (struct ColorComponent){50, 50, 50, 255};
-    registry.colors_[manager.entity_to_idx_[pC]] = (struct ColorComponent){255, 0, 0, 255};
-    registry.colors_[manager.entity_to_idx_[pD]] = (struct ColorComponent){0, 255, 0, 255};
-    registry.colors_[manager.entity_to_idx_[pE]] = (struct ColorComponent){0, 0, 255, 255};
+    for (int i = 0; i < 10000; i++) {
+      Entity ent = addEntity(&manager, TRANS|COLOR);
+      registry.transforms_[manager.entity_to_idx_[ent]] = (struct TransformComponent){rand()%501, rand()%501, rand()%10, rand()%10};
+      registry.colors_[manager.entity_to_idx_[ent]] = (struct ColorComponent){rand()%256, rand()%256, rand()%256, 255};
+    }
 
     return 0;
 }

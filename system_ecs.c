@@ -13,7 +13,7 @@ void updateTransforms(struct EntityManager* mgr, struct ComponentRegistry* reg) 
     reg->transforms_[idx].pos_y += reg->transforms_[idx].vel_y*0.1;
     reg->transforms_[idx].pos_x += reg->transforms_[idx].vel_x*0.1;
 
-    printf("Entity %zu, Idx %zu: [%f,%f]\n", entity, idx, reg->transforms_[idx].pos_x, reg->transforms_[idx].pos_y);
+    // printf("Entity %zu, Idx %zu: [%f,%f]\n", entity, idx, reg->transforms_[idx].pos_x, reg->transforms_[idx].pos_y);
   }
 }
 
@@ -26,10 +26,10 @@ void renderColors(struct EntityManager* mgr, struct ComponentRegistry* reg, SDL_
     if (!(bitat(mgr->component_tracker_[idx], color))) continue;
 
     SDL_SetRenderDrawColor(renderer, reg->colors_[idx].r, reg->colors_[idx].g, reg->colors_[idx].b, reg->colors_[idx].a);
-    SDL_FRect rect = {reg->transforms_[idx].pos_x, reg->transforms_[idx].pos_y, 10, 10};
+    SDL_FRect rect = {reg->transforms_[idx].pos_x, reg->transforms_[idx].pos_y, 5, 5};
     SDL_RenderRect(renderer, &rect);
 
-    printf("Entity %zu, Idx %zu: [%d,%d,%d]\n", entity, idx, reg->colors_[idx].r, reg->colors_[idx].g, reg->colors_[idx].b);
+    // printf("Entity %zu, Idx %zu: [%d,%d,%d]\n", entity, idx, reg->colors_[idx].r, reg->colors_[idx].g, reg->colors_[idx].b);
   }
 
   SDL_RenderPresent(renderer);
@@ -46,10 +46,10 @@ void updateCollisions(struct EntityManager* mgr, struct ComponentRegistry* reg) 
 
     if (!(bitat(mgr->component_tracker_[idx], trans))) continue;
 
-    if (reg->transforms_[idx].pos_y == 0) reg->transforms_[idx].vel_y*=-1;
-    else if (reg->transforms_[idx].pos_y == 500) reg->transforms_[idx].vel_y*=-1;
+    if (reg->transforms_[idx].pos_y <= 0) reg->transforms_[idx].vel_y*=-1;
+    else if (reg->transforms_[idx].pos_y >= 500) reg->transforms_[idx].vel_y*=-1;
 
-    if (reg->transforms_[idx].pos_x == 0) reg->transforms_[idx].vel_x*=-1;
-    if (reg->transforms_[idx].pos_x == 500) reg->transforms_[idx].vel_x*=-1;
+    if (reg->transforms_[idx].pos_x <= 0) reg->transforms_[idx].vel_x*=-1;
+    if (reg->transforms_[idx].pos_x >= 500) reg->transforms_[idx].vel_x*=-1;
   }
 }
