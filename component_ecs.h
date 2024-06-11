@@ -29,8 +29,14 @@ struct ComponentRegistry {
   struct AnimationComponent animations_[MAX_ENTITIES];
 };
 
+void PackComponentData(struct EntityManager* mgr, struct ComponentRegistry* reg, size_t aliveIdx, size_t deadIdx);
+
 
 // COMPONENT MACROS
-#define TRANS (1l << 0)
-#define COLOR (1l << 1)
-#define ANIMA (1l << 2)
+#define trans 0
+#define color 1
+#define anima 2
+
+#define TRANS (1l << trans)
+#define COLOR (1l << color)
+#define ANIMA (1l << anima)

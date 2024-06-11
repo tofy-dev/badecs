@@ -8,7 +8,7 @@ void updateTransforms(struct EntityManager* mgr, struct ComponentRegistry* reg) 
     Entity entity = mgr->idx_to_entity_[i];
     size_t idx = mgr->entity_to_idx_[entity];
 
-    if (!(bitat(mgr->component_tracker_[idx], TRANS))) continue;
+    if (!(bitat(mgr->component_tracker_[idx], trans))) continue;
 
     reg->transforms_[idx].pos_y += reg->transforms_[idx].vel_y*0.1;
     reg->transforms_[idx].pos_x += reg->transforms_[idx].vel_x*0.1;
@@ -22,8 +22,8 @@ void renderColors(struct EntityManager* mgr, struct ComponentRegistry* reg, SDL_
     Entity entity = mgr->idx_to_entity_[i];
     size_t idx = mgr->entity_to_idx_[entity];
 
-    if (!(bitat(mgr->component_tracker_[idx], TRANS))) continue;
-    if (!(bitat(mgr->component_tracker_[idx], COLOR))) continue;
+    if (!(bitat(mgr->component_tracker_[idx], trans))) continue;
+    if (!(bitat(mgr->component_tracker_[idx], color))) continue;
 
     SDL_SetRenderDrawColor(renderer, reg->colors_[idx].r, reg->colors_[idx].g, reg->colors_[idx].b, reg->colors_[idx].a);
     SDL_FRect rect = {reg->transforms_[idx].pos_x, reg->transforms_[idx].pos_y, 10, 10};
@@ -31,6 +31,8 @@ void renderColors(struct EntityManager* mgr, struct ComponentRegistry* reg, SDL_
 
     printf("Entity %zu, Idx %zu: [%d,%d,%d]\n", entity, idx, reg->colors_[idx].r, reg->colors_[idx].g, reg->colors_[idx].b);
   }
+
+  SDL_RenderPresent(renderer);
 }
 
 void updateAnimations(struct EntityManager* mgr, struct ComponentRegistry* reg) {

@@ -49,6 +49,8 @@ Entity addEntity(struct EntityManager* mgr, long component_tracker) {
   return usig;
 }
 
+// NOTE: removing an entity DOES NOT update the component data.
+// PackComponentData MUST BE EXPLICITLY CALLED, or else BAD THINGS HAPPEN!!!
 void removeEntity(struct EntityManager* mgr, Entity entity) {
   // stop if entity is not in world
   assert(mgr->entity_count_ != 0 && mgr->entity_to_idx_[entity] != -1);

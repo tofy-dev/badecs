@@ -66,17 +66,18 @@ int SDL_AppInit(void** appstate, int argc, char* argv[]) {
     pD = addEntity(&manager, TRANS|COLOR); 
     pE = addEntity(&manager, TRANS|COLOR); 
 
-    registry.transforms_[pA] = (struct TransformComponent){50, 250, 0, 0};
-    registry.transforms_[pB] = (struct TransformComponent){75, 250, 0, 0};
-    registry.transforms_[pC] = (struct TransformComponent){100, 250, -10, -10};
-    registry.transforms_[pD] = (struct TransformComponent){200, 250, 10, 10};
-    registry.transforms_[pE] = (struct TransformComponent){300, 250, 0, -10};
+    // should accept entity_to_index_ value
+    registry.transforms_[manager.entity_to_idx_[pA]] = (struct TransformComponent){50, 250, 0, 0};
+    registry.transforms_[manager.entity_to_idx_[pB]] = (struct TransformComponent){75, 250, 0, 0};
+    registry.transforms_[manager.entity_to_idx_[pC]] = (struct TransformComponent){100, 250, -10, -10};
+    registry.transforms_[manager.entity_to_idx_[pD]] = (struct TransformComponent){200, 250, 10, 10};
+    registry.transforms_[manager.entity_to_idx_[pE]] = (struct TransformComponent){300, 250, 0, -10};
 
-    registry.colors_[pA] = (struct ColorComponent){255, 255, 255, 255};
-    registry.colors_[pB] = (struct ColorComponent){50, 50, 50, 255};
-    registry.colors_[pC] = (struct ColorComponent){255, 0, 0, 255};
-    registry.colors_[pD] = (struct ColorComponent){0, 255, 0, 255};
-    registry.colors_[pE] = (struct ColorComponent){0, 0, 255, 255};
+    registry.colors_[manager.entity_to_idx_[pA]] = (struct ColorComponent){255, 255, 255, 255};
+    registry.colors_[manager.entity_to_idx_[pB]] = (struct ColorComponent){50, 50, 50, 255};
+    registry.colors_[manager.entity_to_idx_[pC]] = (struct ColorComponent){255, 0, 0, 255};
+    registry.colors_[manager.entity_to_idx_[pD]] = (struct ColorComponent){0, 255, 0, 255};
+    registry.colors_[manager.entity_to_idx_[pE]] = (struct ColorComponent){0, 0, 255, 255};
 
     return 0;
 }
@@ -104,15 +105,13 @@ int SDL_AppIterate(void *appstate) {
   if (SDL_GetTicks() % 500 == 0) {
     updateTransforms(&manager, &registry);
     renderColors(&manager, &registry, renderer);
-    debug(&manager);
+    // debug(&manager);
 
     for (int i = 0; i < manager.entity_count_; i++) {
       struct TransformComponent tc = registry.transforms_[manager.idx_to_entity_[i]];
       struct ColorComponent cc = registry.colors_[manager.idx_to_entity_[i]];
-      printf("Entity %zu: [%f,%f]\n", manager.idx_to_entity_[i], tc.pos_x, tc.pos_y);
     }
   }
 
-  SDL_RenderPresent(renderer);
   return app_quit;
 }
