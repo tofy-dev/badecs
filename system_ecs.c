@@ -10,8 +10,10 @@ void updateTransforms(struct EntityManager* mgr, struct ComponentRegistry* reg) 
 
     if (!(bitat(mgr->component_tracker_[idx], TRANS))) continue;
 
-    reg->transforms_[i].pos_y += reg->transforms_[i].vel_y*0.1;
-    reg->transforms_[i].pos_x += reg->transforms_[i].vel_x*0.1;
+    reg->transforms_[idx].pos_y += reg->transforms_[idx].vel_y*0.1;
+    reg->transforms_[idx].pos_x += reg->transforms_[idx].vel_x*0.1;
+
+    printf("Entity %zu, Idx %zu: [%f,%f]\n", entity, idx, reg->transforms_[idx].pos_x, reg->transforms_[idx].pos_y);
   }
 }
 
@@ -23,11 +25,12 @@ void renderColors(struct EntityManager* mgr, struct ComponentRegistry* reg, SDL_
     if (!(bitat(mgr->component_tracker_[idx], TRANS))) continue;
     if (!(bitat(mgr->component_tracker_[idx], COLOR))) continue;
 
-    SDL_SetRenderDrawColor(renderer, reg->colors_[i].r, reg->colors_[i].g, reg->colors_[i].b, reg->colors_[i].a);
-    SDL_FRect rect = {reg->transforms_[i].pos_x, reg->transforms_[i].pos_y, 10, 10};
+    SDL_SetRenderDrawColor(renderer, reg->colors_[idx].r, reg->colors_[idx].g, reg->colors_[idx].b, reg->colors_[idx].a);
+    SDL_FRect rect = {reg->transforms_[idx].pos_x, reg->transforms_[idx].pos_y, 10, 10};
     SDL_RenderRect(renderer, &rect);
+
+    printf("Entity %zu, Idx %zu: [%d,%d,%d]\n", entity, idx, reg->colors_[idx].r, reg->colors_[idx].g, reg->colors_[idx].b);
   }
-  SDL_RenderPresent(renderer);
 }
 
 void updateAnimations(struct EntityManager* mgr, struct ComponentRegistry* reg) {

@@ -11,15 +11,13 @@
 // copy boilerplate
 // dont forget to initalize registry
 Entity pA, pB, pC, pD, pE;
-struct EntityManager mgr_ = {0, {0}, {0}, {0}, {0}};
-struct ComponentRegistry registry_ = {{{0, 0, 0, 0}}, {{0, 0, 0, 0}}, {{0}}};
+struct EntityManager manager = {0, {0}, {0}, {0}, {0}};
+struct ComponentRegistry registry = {{{0, 0, 0, 0}}, {{0, 0, 0, 0}}, {{0}}};
 
+SDL_Window* window;
+SDL_Renderer* renderer;
+SDL_bool app_quit;
 
-struct AppContext {
-    SDL_Window* window;
-    SDL_Renderer* renderer;
-    SDL_bool app_quit;
-};
 
 int SDL_Fail(){
     SDL_LogError(SDL_LOG_CATEGORY_CUSTOM, "Error %s", SDL_GetError());
@@ -33,12 +31,12 @@ int SDL_AppInit(void** appstate, int argc, char* argv[]) {
     }
     
     // create a window
-    SDL_Window* window = SDL_CreateWindow("Window", 500, 500, SDL_WINDOW_RESIZABLE);
+    window = SDL_CreateWindow("Window", 500, 500, SDL_WINDOW_RESIZABLE);
     if (!window){
         return SDL_Fail();
     }
     
-    SDL_Renderer* renderer = SDL_CreateRenderer(window, NULL);
+    renderer = SDL_CreateRenderer(window, NULL);
     if (!renderer){
         return SDL_Fail();
     }
@@ -56,78 +54,65 @@ int SDL_AppInit(void** appstate, int argc, char* argv[]) {
         }
     }
 
-    // set up the application data
-    // i have no idea if this works
-    struct AppContext* appContext = malloc(sizeof(*appContext));
-    appContext->window = window;
-    appContext->renderer = renderer;
-    appContext->app_quit = SDL_FALSE;
-
-    appstate = (void**)&appContext;
-    
-
     SDL_Log("Application started successfully!");
 
 
     // start program
-    /*
-    initEntityManager(&mgr_);
+    initEntityManager(&manager);
 
-    pA = addEntity(&mgr_, 0);
-    pB = addEntity(&mgr_, 0); 
-    pC = addEntity(&mgr_, 0); 
-    pD = addEntity(&mgr_, 0); 
-    pE = addEntity(&mgr_, 0); 
+    pA = addEntity(&manager, TRANS|COLOR);
+    pB = addEntity(&manager, TRANS|COLOR); 
+    pC = addEntity(&manager, TRANS|COLOR); 
+    pD = addEntity(&manager, TRANS|COLOR); 
+    pE = addEntity(&manager, TRANS|COLOR); 
 
-    registry_.transforms_[pA] = (struct TransformComponent){50, 250, 0, 0};
-    registry_.transforms_[pB] = (struct TransformComponent){75, 250, 0, 0};
-    registry_.transforms_[pC] = (struct TransformComponent){100, 250, -10, -10};
-    registry_.transforms_[pD] = (struct TransformComponent){200, 250, 10, 10};
-    registry_.transforms_[pE] = (struct TransformComponent){300, 250, 0, -10};
+    registry.transforms_[pA] = (struct TransformComponent){50, 250, 0, 0};
+    registry.transforms_[pB] = (struct TransformComponent){75, 250, 0, 0};
+    registry.transforms_[pC] = (struct TransformComponent){100, 250, -10, -10};
+    registry.transforms_[pD] = (struct TransformComponent){200, 250, 10, 10};
+    registry.transforms_[pE] = (struct TransformComponent){300, 250, 0, -10};
 
-    registry_.colors_[pA] = (struct ColorComponent){255, 255, 255, 255};
-    registry_.colors_[pB] = (struct ColorComponent){50, 50, 50, 255};
-    registry_.colors_[pC] = (struct ColorComponent){255, 0, 0, 255};
-    registry_.colors_[pD] = (struct ColorComponent){0, 255, 0, 255};
-    registry_.colors_[pE] = (struct ColorComponent){0, 0, 255, 255};
-    */
+    registry.colors_[pA] = (struct ColorComponent){255, 255, 255, 255};
+    registry.colors_[pB] = (struct ColorComponent){50, 50, 50, 255};
+    registry.colors_[pC] = (struct ColorComponent){255, 0, 0, 255};
+    registry.colors_[pD] = (struct ColorComponent){0, 255, 0, 255};
+    registry.colors_[pE] = (struct ColorComponent){0, 0, 255, 255};
 
     return 0;
 }
 
 int SDL_AppEvent(void *appstate, const SDL_Event* event) {
-    struct AppContext* app = (struct AppContext*)appstate;
-    
     if (event->type == SDL_EVENT_QUIT) {
-        app->app_quit = SDL_TRUE;
+        app_quit = SDL_TRUE;
     }
 
     return 0;
 }
 
 void SDL_AppQuit(void* appstate) {
-    struct AppContext* app = (struct AppContext*)appstate;
-    if (app) {
-        SDL_DestroyRenderer(app->renderer);
-        SDL_DestroyWindow(app->window);
-        free(app);
-    }
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(window);
 
     SDL_Quit();
     SDL_Log("Application quit successfully!");
 }
 
 int SDL_AppIterate(void *appstate) {
-  struct AppContext* app = (struct AppContext*)appstate;
-  /*
-  SDL_SetRenderDrawColor(app->renderer, 0, 0, 0, 0);
-  SDL_RenderClear(app->renderer);
+  SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
+  SDL_RenderClear(renderer);
 
-  if (SDL_GetTicks() % 100 == 0) {
-    updateTransforms(&mgr_, &registry_);
-    renderColors(&mgr_, &registry_, app->renderer);
+  if (SDL_GetTicks() % 500 == 0) {
+    updateTransforms(&manager, &registry);
+    renderColors(&manager, &registry, renderer);
+    debug(&manager);
+
+    for (int i = 0; i < manager.entity_count_; i++) {
+      struct TransformComponent tc = registry.transforms_[manager.idx_to_entity_[i]];
+      struct ColorComponent cc = registry.colors_[manager.idx_to_entity_[i]];
+      printf("Entity %zu: [%f,%f]\n", manager.idx_to_entity_[i], tc.pos_x, tc.pos_y);
+    }
   }
-  */
 
-  return app->app_quit;
+  SDL_RenderPresent(renderer);
+  return app_quit;
 }
